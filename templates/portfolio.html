@@ -20,22 +20,43 @@
 <div align="center" ;class="row">
     <form action="{{ url_for('manage_portfolio') }}" method="POST">
 
+    <p style="color:indianred;text-align: center;"><b>Your input type should be either a single element,
+        or in the format of "a, b, c"(separated by comma and without redundant items)</b></p>
+
         <p style="color:orange;text-align: center;"><b>Add some tickers to your portfolio </b></p>
-        <!-- <input type="text" name="comment"/> -->
         <textarea name="add tickers" rows="4" cols="50"></textarea>
-        <br/>
+        <br>
 
 
-        <br/>
+        {% if n > 1 %}
+            <br>
+            <p style="color:orange;text-align: center;"><b>Remove some tickers to your portfolio </b></p>
+            <textarea name="remove tickers" rows="4" cols="50"></textarea>
+            <br>
 
-        <input type="submit" class="btn-lg" value="submit">
+            <br>
+            <p style="color:orange;text-align: center;"><b>Set the weights you're investigating on following tickers</b>
+            </p>
+            <textarea name="option weights" rows="4" cols="50"></textarea>
+            <br>
+
+        {% endif %}
+
+        <br>
+
+        <input type="submit" class="btn-lg" value="submit" style="width:125px;height:30px;
+        background-color:pink;color: lightcoral;font-weight:bold;font-size:16px">
     </form>
 </div>
 
 <br>
+<br>
 
 <div align="center">
-    {% if print_ind == 1 %}
+    {% if n > 1 %}
+
+        <p style="color:orange;text-align: center;"><b> Basic information of stocks in your portfolio. </b></p>
+
         <table>
             <thead>
             <tr style="text-align: center">
@@ -51,7 +72,7 @@
                 <tr>
                     <th> {{ key }} </th>
                     {% for x in value %}
-                        <td style="width: 149px"> {{ x }} </td>
+                        <td style="width: 200px"> {{ x }} </td>
                     {% endfor %}
                 </tr>
 
@@ -59,14 +80,58 @@
             </tbody>
         </table>
     {% endif %}
-
-
 </div>
 <br>
 
+
 <div align="center">
-    <button id="load" onclick="window.history.go(-1)">back</button>
+    {% if exp_ret != 'empty' %}
+
+        <p style="color:orange;text-align: center;"><b> Generally, this is your portfolio. </b></p>
+
+        <table>
+            {#            <thead>#}
+            {#            <tr style="text-align: center">#}
+            {#                <th></th>#}
+            {#                <th>Beta(respect to 'SPY')</th>#}
+            {#                <th>Expected return</th>#}
+            {#                <th>volatility</th>#}
+            {#            </tr>#}
+            {#            </thead>#}
+            <tbody align="center">
+            {% for key, value in weight_df.items() %}
+
+                <tr>
+                    <th> {{ key }} </th>
+                    {% for x in value %}
+                        <td style="width: 149px"> {{ x }} </td>
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <p>The expected return would be {{ exp_ret }}</p>
+
+    {% endif %}
 </div>
+
+
+<div align="center">
+    {% for i in range(3) %}
+        <label> </label> <img src="static/illustration1.jpg" width="225" height="225" alt=""/>
+        <label> </label> <img src="static/illustration2.jpg" width="225" height="225"  alt=""/>
+    {% endfor %}
+</div>
+
+
+<div align="center">
+    <button id="load" onclick="window.history.go(-1)" style="width:125px;height:30px;
+        background-color:pink;color: lightcoral;font-weight:bold;font-size:16px">back</button>
+</div>
+
+
 
 <br>
 <br>

@@ -1,8 +1,5 @@
-import pandas as pd
 import numpy as np
 from scipy.stats import norm
-from autograd import grad
-import scipy
 
 
 class CommonOption:

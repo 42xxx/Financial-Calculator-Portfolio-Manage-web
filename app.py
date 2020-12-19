@@ -1,25 +1,15 @@
-from flask import Flask, render_template, request, url_for, flash
-import pandas as pd
-import numpy as np
-import os
-import yfinance as yf
+from flask import Flask, render_template, request
 import itertools
 from commonoption import *
 import quandl
 import matplotlib.pyplot as plt
-from matplotlib import ticker
-from matplotlib.pylab import date2num
-import urllib
 from io import BytesIO
 import base64
-from lxml import etree
-import random
-import datetime
-from pyecharts.charts import Kline
 import mpl_finance as mpf
 from portfolio import *
 
 
+# Initialize
 app = Flask(__name__)
 quandl.ApiConfig.api_key = "ASwbrrw4mXfhBSMWrEtp"
 risk_free = quandl.get('FRED/DGS1', authtoken="ASwbrrw4mXfhBSMWrEtp").iloc[-1, 0]
@@ -29,8 +19,9 @@ formatted_today = today.strftime('%Y-%m-%d')
 one_year = today + datetime.timedelta(days=-365)
 formatted_one_year = one_year.strftime('%Y-%m-%d')
 
-
 port = Portfolio([])
+info_df = None
+
 
 @app.route('/')
 def home():
@@ -39,9 +30,16 @@ def home():
 
 @app.route('/result', methods=['POST', 'GET'])
 def user_rec():
+    """
+    Using for basic functionality of the financial calculator
+
+    :return: to the result page of basic financial calculator results
+    """
     pricing_model = request.form.getlist('pricing_model')
     option_type = request.form.getlist('option_type')
     ticker = request.form['ticker']
+
+    # input error detect
     if request.method == 'POST':
         err_index = []
         skrt = [request.form['S'], request.form['K'], request.form['r'], request.form['T']]
@@ -62,12 +60,18 @@ def user_rec():
         if len(err_index) == 0:
             pass
         else:
+            # back to the home page together with error description
             return render_template('home.html', err=np.min(err_index))
+
+    # the formal calculation part
     S, K, r, T = read_in()
+    # using one year historical data to calculate volatility and plot price trend chart
     try:
         adj_close = yf.download(ticker, start=formatted_one_year, end=formatted_today)['Adj Close']
     except ValueError("There's not enough data."):
         adj_close = yf.download(ticker)['Adj Close']
+
+    # plot price trend chart and show it on the web page
     fig = plt.figure(figsize=(12, 8), dpi=100, facecolor="white")
     plt.title('Adjusted close of ' + ticker)
     plt.plot(adj_close, color='darkseagreen')
@@ -78,6 +82,7 @@ def user_rec():
     data = base64.encodebytes(sio.getvalue()).decode()
     adj_plot = 'data:image/png;base64,' + str(data)
 
+    # plot candle stick chart and show it on the web page
     sio = BytesIO()
     if request.form.get('candle_stick') == 'day':
         candle_fig = candle_stick(ticker)
@@ -87,6 +92,7 @@ def user_rec():
     data = base64.encodebytes(sio.getvalue()).decode()
     cs_plot = 'data:image/png;base64,' + str(data)
 
+    # format a pandas data frame to store the pricing results together with methods and some other info
     result_df = pd.DataFrame(columns=['model', 'option type', 'Expected PRICE'])
     title, prices, model, o_type, BS_bool, BS_df, BS_html = [], [], [], [], False, None, None
     call = CommonOption(call_or_put=1, maturity=T/365, spot_price=S,
@@ -96,6 +102,7 @@ def user_rec():
                        sigma=float(np.std(adj_close.diff()[1:]/adj_close[:-1]) * np.sqrt(252)),
                        risk_free_rate=r, strike_price=K, dividends=0)
 
+    # create another table for option parameters calculated with Black Shore model
     if 'BS model' in pricing_model:
         BS_bool = True
         model = ['BS model']*2
@@ -104,8 +111,11 @@ def user_rec():
         BS_df = pd.DataFrame(columns=['delta', 'gamma', 'vega', 'theta', 'rho'], index=['call', 'put'])
         BS_df.iloc[0, :] = call.B_S_call_para()[1:]
         BS_df.iloc[1, :] = call.B_S_put_para()[1:]
+
+    # mapping all combinations of financial model and option type
     combination = list(itertools.product(pricing_model, option_type))
 
+    # format the result data frame
     [model.append(i) for i in np.array([[i[0]]*2 for i in combination]).flatten()]
     [o_type.append(i) for i in np.array([[i[1]]*2 for i in combination]).flatten()]
     result_df['model'] = np.array(model).flatten()
@@ -121,26 +131,61 @@ def user_rec():
     result_df.index = title
     result_df['Expected PRICE'] = prices
 
+    # link to the result web page
     return render_template('result.html', result=result_df, BS_bool=BS_bool,
                            BS_df=BS_df, adj_plt=adj_plot, candle_plt=cs_plot)
 
 
 @app.route('/portfolio', methods=['POST', 'GET'])
 def manage_portfolio():
-    global port
+    """
+    Using for functionality associated with portfolio
+
+    :return:link to the portfolio page
+    """
+    global port, info_df
+    exp_ret, weight_df = ['empty']*2
+    n = len(port.tickers)
     try:
         ticker_add = request.form['add tickers']
-        tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_add.split(',')]
+        if ',' in ticker_add:
+            tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_add.split(',')]
+        else:
+            tickers = ticker_add.strip()
         print(tickers)
         port.add_tickers(tickers)
         port.prepare_data()
         info_df = port.generate_df()
-        print_ind = 1
     except:
-        info_df = None
-        print_ind = 0
-    print(print_ind)
-    return render_template('portfolio.html', info_df=info_df, print_ind=print_ind)
+        pass
+
+    if n > 1:
+        try:
+            ticker_remove = request.form['remove tickers']
+            if ',' in ticker_remove:
+                tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_remove.split(',')]
+            else:
+                tickers = ticker_remove.strip()
+            print(tickers)
+            port.remove_tickers(tickers)
+            print(port.tickers)
+            port.prepare_data()
+            info_df = port.generate_df()
+        except:
+            pass
+
+        try:
+            weights_in = request.form['option weights']
+            weights = [i.lstrip().rstrip() for i in weights_in.split(',')]
+            weights = [float(i) for i in weights]
+            exp_ret = round(port.expect_return(weights), 4)
+        except ValueError:
+            return render_template('portfolio.html', info_df=info_df, n=len(port.tickers), exp_ret=exp_ret, weight_df=weight_df)
+
+        weight_df = pd.DataFrame(columns=['ticker', 'weights'])
+        weight_df['ticker'] = port.tickers[:-1]
+        weight_df['weights'] = port.weights
+    return render_template('portfolio.html', info_df=info_df, n=len(port.tickers), exp_ret=exp_ret, weight_df=weight_df)
 
 
 def read_in():
@@ -163,15 +208,15 @@ def read_in():
     return S, K, r, T
 
 
-def run_time():
-    S = request.form['S']
-    K = request.form['K']
-    r = request.form['r']
-    T = request.form['T']
-    return S, K, r, T
-
-
 def fit_model(model, option_type, option: CommonOption):
+    """
+    It's made to simplify functions with decoration
+
+    :param model: a financial model that is to be used
+    :param option_type: Option type that needed to be considered
+    :param option: the initialized CommonOption class object
+    :return: estimated price of the option
+    """
     price = -1
     if model == 'BS model':
         price = option.B_S()
@@ -187,6 +232,14 @@ def fit_model(model, option_type, option: CommonOption):
 
 
 def candle_stick(stock, period='day'):
+    """
+    A function to generate candle stick chart with given stock symbol and time period of a single stick.
+    For weekly chart use latest 500 days price information and for daily, use the last half year's data.
+
+    :param stock:stock symbol
+    :param period:to generate daily chart or weekly, input 'day' or 'week
+    :return:the plot object generated by matplotlib.pyplot
+    """
     if period == "week":
         start = today + datetime.timedelta(days=-500)
         formatted_start = start.strftime('%Y-%m-%d')
@@ -196,6 +249,7 @@ def candle_stick(stock, period='day'):
             prices_row = yf.download(stock)
         days = prices_row.index
 
+        # to make groups of data in order to find prices of every single sticks
         weekdays = []
         stamp = []
         temp_day = days[0]

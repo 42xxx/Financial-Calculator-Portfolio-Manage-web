@@ -7,9 +7,6 @@
 
 <header>
     <div class="container">
-        <div id="brandname">
-            Financial Calculator using flask API
-        </div>
         <h2 style="color:orange;text-align: center;">Financial Calculator using flask API</h2>
     </div>
 </header>
@@ -74,7 +71,6 @@
         {% if err == 6 %}
             <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
         {% endif %}
-        <br/>
 
         <!-- ———————————————————————————————————————————— -->
 
@@ -94,7 +90,6 @@
         {% if err == 7 %}
             <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
         {% endif %}
-        <br/>
 
         <p style="color:orange;text-align: center;"><b>What period of candle stick you prefer?</b></p>
         <div class="col-sm-2 ">
@@ -113,24 +108,24 @@
         {% endif %}
         <br>
 
-        <input type="submit" class="btn-lg" value="submit">
+        <input type="submit" class="btn-lg" value="submit" style="width:125px;height:30px;
+        background-color:pink;color: lightcoral;font-weight:bold;font-size:16px">
 
     </form>
 </div>
-<br>
-
+<meta name="referrer" content="never">
 <div align="center">
     {% for i in range(3) %}
-        <img src="illustrationsigma is 1.jpg" width="100 px" height="100">
-        <img src="illustration2.jpg" width="100 px" height="100">
+        <label> </label> <img src="static/illustration1.jpg" width="225" height="225" alt=""/>
+        <label> </label> <img src="static/illustration2.jpg" width="225" height="225"  alt=""/>
     {% endfor %}
 </div>
 
-<br>
-<div align="center", >
+<div align="center">
 
     <form action="{{ url_for('manage_portfolio')}}" method="POST">
-        <button type="submit">Manage your portfolio</button>
+        <button type="submit" style="width:250px;height:65px;background-color:lightpink;
+        color: indianred;font-weight:bold;font-size:20px">Manage your portfolio</button>
     </form>
 
 </div>
