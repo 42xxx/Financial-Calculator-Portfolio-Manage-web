@@ -30,7 +30,7 @@ If a user wants to run this code on their own computer without publishing it for
 ![image](https://github.com/StarryYJ/Financial-Cauculater/blob/master/IMG/home.jpg)
 2.the result page: is the page to show results and corresponding models/settings provided by the financial calculator.  
 ![image](https://github.com/StarryYJ/Financial-Cauculater/blob/master/IMG/result_1.jpg)
-![image](https://github.com/StarryYJ/Financial-Cauculater/blob/master/IMG/result_2.jpg)
+![image](https://github.com/StarryYJ/Financial-Cauculater/blob/master/IMG/result_2.png)
 3.the portfolio page: when stitching to this page for the first time, user would type in some stock symbols to create a portfolio. Then there will be textarea that allow user to add new tickers or to remove existing ones. The program will send back basic information of these tickers. Also user could type in the weights of each assets to see the total expected return.
 ![image](https://github.com/StarryYJ/Financial-Cauculater/blob/master/IMG/portfolio_re.jpg)
 4.At the end of both result page and the portfolio page there is a 'back' button that allow user to go back to the previous page.
