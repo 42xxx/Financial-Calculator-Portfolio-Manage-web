@@ -25,45 +25,27 @@
 <div align="center" ;class="row">
     <form action="{{ url_for('user_rec') }}" method="POST">
 
-        {#            <p style="color:orange;text-align: center;"><b>Enter Your Feature Here</b></p>#}
-        <!-- <input type="text" name="comment"/> -->
-        {#            <p style="color:blue;text-align: center;"><b>Enter the ticker of the stock</b></p>#}
-        {#            <textarea name="ticker" rows="2" cols="10" ></textarea>#}
-        {##}
-        {#            <p style="color:blue;text-align: center;"><b>Enter Your Stock price here</b></p>#}
-        {#            <textarea name="S" rows="2" cols="10" ></textarea>#}
-        {##}
-        {#            <p style="color:blue;text-align: center;"><b>Enter Your Strike price</b></p>#}
-        {#            <textarea name="K" rows="2" cols="10" ></textarea>#}
-        {##}
-        {#            <p style="color:blue;text-align: center;"><b>Enter Your Risk free rate</b></p>#}
-        {#            <textarea name="r" rows="2" cols="10" ></textarea>#}
-        {##}
-        {#            <p style="color:blue;text-align: center;"><b>Enter Your Time to maturity</b></p>#}
-        {#            <textarea name="T" rows="2" cols="10" ></textarea>#}
-        {#            <br/>#}
-
         <!-- ———————————————————————————————————————————— -->
 
 
         <p>ticker <input type="text" name="ticker" required/></p>
-        {% if err == 1%}
+        {% if err == 1 %}
             <strong style="color:red;text-align: center;"> Your input Ticker is not listed in yahoo finance</strong>
         {% endif %}
         <p>Stock price <input type="text" name="S" required/></p>
-            {% if err == 2%}
+        {% if err == 2 %}
             <strong style="color:red;text-align: center;"> Your input S is not a number</strong>
         {% endif %}
         <p>Strike price <input type="text" name="K" required/></p>
-            {% if err == 3%}
+        {% if err == 3 %}
             <strong style="color:red;text-align: center;"> Your input K is not a number</strong>
         {% endif %}
         <p>Risk free return <input type="text" name="r"/></p>
-            {% if err == 4%}
+        {% if err == 4 %}
             <strong style="color:red;text-align: center;"> Your input r is not a number</strong>
         {% endif %}
         <p>Time to maturity <input type="text" name="T" required/></p>
-            {% if err == 5%}
+        {% if err == 5 %}
             <strong style="color:red;text-align: center;"> Your input T is not a number</strong>
         {% endif %}
 
@@ -89,7 +71,7 @@
                 <input name="pricing_model" value="Trinomial Tree" type="checkbox"> Trinomial Tree
             </label>
         </div>
-        {% if err == 6%}
+        {% if err == 6 %}
             <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
         {% endif %}
         <br/>
@@ -109,7 +91,7 @@
                 <input name="option_type" value="American Option" type="checkbox"> American Option
             </label>
         </div>
-        {% if err == 7%}
+        {% if err == 7 %}
             <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
         {% endif %}
         <br/>
@@ -126,22 +108,33 @@
                 <input name="candle_stick" value="Week" type="radio"> Weekly Chart
             </label>
         </div>
-        {% if err == 8%}
-            <strong style="color:red;text-align: center;"> You must choose one</strong>
+        {% if err == 8 %}
+            <strong style="color:#ff0000;text-align: center;"> You must choose one</strong>
         {% endif %}
-<br>
+        <br>
 
         <input type="submit" class="btn-lg" value="submit">
 
     </form>
 </div>
 <br>
+
 <div align="center">
     {% for i in range(3) %}
         <img src="illustrationsigma is 1.jpg" width="100 px" height="100">
         <img src="illustration2.jpg" width="100 px" height="100">
     {% endfor %}
 </div>
+
+<br>
+<div align="center", >
+
+    <form action="{{ url_for('manage_portfolio')}}" method="POST">
+        <button type="submit">Manage your portfolio</button>
+    </form>
+
+</div>
+<br>
 
 </body>
 </html>

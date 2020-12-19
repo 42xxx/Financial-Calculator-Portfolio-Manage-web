@@ -1,42 +1,34 @@
 
-## FE 595 Midterm
+## FE 595 Final
 
 \
 \
-**Summary**
+**Purpose**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-A collaborative project between group members Yuwen Jin, Minghao Kang, Fangchi Wu, and Shiraz Bheda. The goal is to create a web interface from which the user may select up to 8 unique NLP analytical tools to be applied on a text string that is entered into a blank text box by the user:
-
-[![Screenshot-2020-11-09-210040.png](https://i.postimg.cc/Ss0w8FNk/Screenshot-2020-11-09-210040.png)](https://postimg.cc/VSRGQhCV)
-
+A collaborative project between group members Yuwen Jin, Minghao Kang, Fangchi Wu, and Shiraz Bheda. Our purpose was to create a website with multiple features for options pricing, including user input, data visualization, and a comparison of runtime metrics that varies with source of historical data. The idea of this tool is that it will serve as a baseline for a potentially marketable product for end users who want to price out options quickly using their own assumptions in a clean and presentable web interface.
 \
 \
-**Description of NLP tools**
+**Inspiration**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-1. Sentiment Analysis: indicates whether sentiment in the text string is positive or negative
-2. Language Detect: returns the name of the most possible language that the string is written in
-3. Tokenize: tokenizes the string
-4. Top Ten: returns a list of up to ten of the most frequently used words
-5. Part of Speech Tagging: assigns each word in the string to a part of speech
-6. English to French: translates the string from English to French
-7. English to Chinese: translates the string from English to Chinese
-8. Spell Check: returns spell check result of the text
-
+We wanted to apply some of the skills we have learned in this class towards created fast and user-friendly financial tools. One of the main benefits of this project is that it has a lot of built-in user flexibility that allows for detailed results with a faster turnaround time than any simple solver-driven excel sheet can provide. Importantly, this project represents a baseline that is very scalable if the data is stored in a database, as opposed to downloading the necessary historical data from a package with every user request. Observing the differences in runtime helped in forming this conclusion and developing a product that is much more scalable.
 \
 \
-**Instructions**
+**List of features for usage**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-One way to **access the website** is to run 'flask api.py' in this project directly. In this case, if you're using Windows system the homepage address is '127.0.0.1:5000', and if you're using ios system the address is '0.0.0.0:8000'. 
-The other way is to launch your AWS instance and connect to your running instance via your terminal. After installing git and python3, and using git clone to clone the repository to your terminal,you will need to install the requirements of the flask api prior to running the script itself.
-
-**Open the home page**, enter text in the blank text box and select method(s) via check box, click 'submit' button then you'll see the result page. 
-If the text entry is blank you'll receive a message saying 'your text is empty', while if you click 'submit' without choosing any analyzing method you'll get another message saying 'please choose at least one analyzing method'. The 'back' button can take you back to the previous page.
-
-NOTE: While most of the required packages to run this script have been placed on a 'requirements.txt' page, there is a subfolder titled 'materials' that contains several additional packages that may need to be manually installed by accessing the file path directory. Once this has been completed, you can uncomment lines in 'flask api.py', 'home.html' and 'result.html', then you'll see another NLP toy, an AI response machine.
-
+1. Data visualization tools, including daily historical returns in a line plot and weekly historical returns in a candlestick chart.
+2. Detailed model feature selection, including model type, maturity type, and option type.
+3. User-friendly input of spot price, strike price, time to maturity, and risk-free rate.
+4. Automatically calculates historical vol given start/end dates for adjusted closing prices of the underlying asset.
+5. Run-time feature with direct comparison of pricing single-stock option using 'yfinance' package versus importing the data via a csv file, as well as pricing stock options for all 30 stocks in DJIA from 'yfinance' package versus imported csv files.
 \
 \
-**Example output**
+**Deployment**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[![Screenshot-2020-11-09-213940.png](https://i.postimg.cc/1XKdF8fZ/Screenshot-2020-11-09-213940.png)](https://postimg.cc/sGvKdDYn)
-
+If a user wants to run this code on their own computer without publishing it for others to use, they will need to clone the code from our git and run it on their own desktop via the terminal. Once it is connected, a unique IP address will pop up, which can be copied and pasted into a browser. This will lead to the website, where the user can input data elements such as spot price, strike price, time to maturity, and risk-free rate. If the user wants to run this code and make it publicly available, then they will require an AWS instance or a similar service. 
+\
+\
+**Next Steps**
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Running a comparison on performance times for our function yielded a significant difference depending on where the data was pulled from. For example, we found that pricing an option for a single stock took ~0.5 seconds, and pricing an option for every stock in the Down Jones index using 'yfinance' package took ~10 seconds. This is unacceptable for a project that is designed to scale. By contrast, pricing a single stock using imported data from a csv file took .11 seconds, while pricing an option for the Dow Jones industry stocks with took .15 seconds. Therefore, we believe that the latter source has significant potential for scalling the project and increasing the number of options this website can price quickly if the data is stored, and not called via packages. A difference of several seconds can mean everything for the anticipated end users, as market traders value speed and quick execution when chasing rallies or selling fades. We believe that faster performance times can be one of the most marketable selling points for this product.
+\
+\

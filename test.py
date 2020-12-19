@@ -70,4 +70,9 @@ if "__main__" == __name__:
 
 	app.run(host='127.0.0.1', port=8000, debug=True)
 
-
+a = 1
+def test(ab):
+	global a
+	a += 2
+	return 0
+test(2)

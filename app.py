@@ -17,6 +17,7 @@ import random
 import datetime
 from pyecharts.charts import Kline
 import mpl_finance as mpf
+from portfolio import *
 
 
 app = Flask(__name__)
@@ -28,6 +29,8 @@ formatted_today = today.strftime('%Y-%m-%d')
 one_year = today + datetime.timedelta(days=-365)
 formatted_one_year = one_year.strftime('%Y-%m-%d')
 
+
+port = Portfolio([])
 
 @app.route('/')
 def home():
@@ -120,6 +123,24 @@ def user_rec():
 
     return render_template('result.html', result=result_df, BS_bool=BS_bool,
                            BS_df=BS_df, adj_plt=adj_plot, candle_plt=cs_plot)
+
+
+@app.route('/portfolio', methods=['POST', 'GET'])
+def manage_portfolio():
+    global port
+    try:
+        ticker_add = request.form['add tickers']
+        tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_add.split(',')]
+        print(tickers)
+        port.add_tickers(tickers)
+        port.prepare_data()
+        info_df = port.generate_df()
+        print_ind = 1
+    except:
+        info_df = None
+        print_ind = 0
+    print(print_ind)
+    return render_template('portfolio.html', info_df=info_df, print_ind=print_ind)
 
 
 def read_in():
