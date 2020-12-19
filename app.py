@@ -38,7 +38,7 @@ def home():
 def user_rec():
     pricing_model = request.form.getlist('pricing_model')
     option_type = request.form.getlist('option_type')
-    ticker, S, K, r, T = 'AAPL', 100, 90, 0.05, 30
+    ticker, S, K, r, T = read_in()
     try:
         adj_close = yf.download(ticker, start=formatted_one_year, end=formatted_today)['Adj Close']
     except ValueError("There's not enough data."):
@@ -70,10 +70,6 @@ def user_rec():
     put = CommonOption(call_or_put=0, maturity=T/365, spot_price=S,
                        sigma=float(np.std(adj_close.diff()[1:]/adj_close[:-1]) * np.sqrt(252)),
                        risk_free_rate=r, strike_price=K, dividends=0)
-    [print(i) for i in [S, K, r, T]]
-
-    pricing_model = ['BS model']
-    option_type = ['European Option']
 
     if 'BS model' in pricing_model:
         BS_bool = True
@@ -147,7 +143,7 @@ def fit_model(model, option_type, option: CommonOption):
         price = option.trinomial_tree_US(3)[0]
     return round(price, 4)
 
-stock = 'AAPL'
+
 def candle_stick(stock, period='day'):
     if period == "week":
         start = today + datetime.timedelta(days=-500)
