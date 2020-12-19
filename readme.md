@@ -17,11 +17,12 @@ We wanted to apply some of the skills we have learned in this class towards crea
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 1. Data visualization tools, including daily historical returns in a line plot and weekly or daily historical returns in a candlestick chart.
 2. Detailed model feature selection, including model type, maturity type, and option type.
-3. User-friendly input of spot price, strike price, time to maturity, and risk-free rate.
+3. User-friendly input of spot price, strike price, time to maturity, and risk-free rate. Missing risk free rate will be replaced by the interest rate of one year US treasury bonds. 
 4. Automatically calculates one year historical volatility for adjusted closing prices of the underlying asset.
 5. Allow user to create and modify their own portfolio by inputting stock symbols and weights of the assets they want to investigate. The program will send back some basic information such as volatility and beta value respect to SPY as market.
-\
-\
+
+
+
 **Deployment**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 If a user wants to run this code on their own computer without publishing it for others to use, they will need to clone the code from our git and run it on their own desktop via the terminal. Once it is connected, a unique IP address will pop up, which can be copied and pasted into a browser. This will lead to the website, where the user can input data elements such as spot price, strike price, time to maturity, and risk-free rate. If the user wants to run this code and make it publicly available, then they will require an AWS instance or a similar service. 
