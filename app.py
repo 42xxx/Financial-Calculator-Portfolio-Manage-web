@@ -38,7 +38,29 @@ def home():
 def user_rec():
     pricing_model = request.form.getlist('pricing_model')
     option_type = request.form.getlist('option_type')
-    ticker, S, K, r, T = read_in()
+    ticker = request.form['ticker']
+    if request.method == 'POST':
+        err_index = []
+        skrt = [request.form['S'], request.form['K'], request.form['r'], request.form['T']]
+        a = yf.download(ticker, start="2019-12-01", end="2020-12-01")['Adj Close']
+        if len(a) == 0:
+            err_index.append(1)
+        for i in range(len(skrt)):
+            try:
+                skrt[i] = float(skrt[i]) and len(skrt[i]) == 0
+            except ValueError:
+                err_index.append(i + 2)
+        if len(pricing_model) == 0:
+            err_index.append(6)
+        if len(option_type) == 0:
+            err_index.append(7)
+        if request.form.get('candle_stick') is None:
+            err_index.append(8)
+        if len(err_index) == 0:
+            pass
+        else:
+            return render_template('home.html', err=np.min(err_index))
+    S, K, r, T = read_in()
     try:
         adj_close = yf.download(ticker, start=formatted_one_year, end=formatted_today)['Adj Close']
     except ValueError("There's not enough data."):
@@ -101,7 +123,6 @@ def user_rec():
 
 
 def read_in():
-    ticker = request.form['ticker']
     try:
         S = float(request.form['S'])
     except ValueError('Please enter a number'):
@@ -118,7 +139,7 @@ def read_in():
         T = float(request.form['T'])
     except ValueError('Please enter a number'):
         T = -1
-    return ticker, S, K, r, T
+    return S, K, r, T
 
 
 def run_time():

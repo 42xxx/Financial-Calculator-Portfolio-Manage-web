@@ -47,10 +47,25 @@
 
 
         <p>ticker <input type="text" name="ticker" required/></p>
+        {% if err == 1%}
+            <strong style="color:red;text-align: center;"> Your input Ticker is not listed in yahoo finance</strong>
+        {% endif %}
         <p>Stock price <input type="text" name="S" required/></p>
+            {% if err == 2%}
+            <strong style="color:red;text-align: center;"> Your input S is not a number</strong>
+        {% endif %}
         <p>Strike price <input type="text" name="K" required/></p>
+            {% if err == 3%}
+            <strong style="color:red;text-align: center;"> Your input K is not a number</strong>
+        {% endif %}
         <p>Risk free return <input type="text" name="r"/></p>
+            {% if err == 4%}
+            <strong style="color:red;text-align: center;"> Your input r is not a number</strong>
+        {% endif %}
         <p>Time to maturity <input type="text" name="T" required/></p>
+            {% if err == 5%}
+            <strong style="color:red;text-align: center;"> Your input T is not a number</strong>
+        {% endif %}
 
 
         <!-- ———————————————————————————————————————————— -->
@@ -74,7 +89,9 @@
                 <input name="pricing_model" value="Trinomial Tree" type="checkbox"> Trinomial Tree
             </label>
         </div>
-
+        {% if err == 6%}
+            <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
+        {% endif %}
         <br/>
 
         <!-- ———————————————————————————————————————————— -->
@@ -92,7 +109,9 @@
                 <input name="option_type" value="American Option" type="checkbox"> American Option
             </label>
         </div>
-
+        {% if err == 7%}
+            <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
+        {% endif %}
         <br/>
 
         <p style="color:orange;text-align: center;"><b>What period of candle stick you prefer?</b></p>
@@ -107,6 +126,9 @@
                 <input name="candle_stick" value="Week" type="radio"> Weekly Chart
             </label>
         </div>
+        {% if err == 8%}
+            <strong style="color:red;text-align: center;"> You must choose one</strong>
+        {% endif %}
 <br>
 
         <input type="submit" class="btn-lg" value="submit">
