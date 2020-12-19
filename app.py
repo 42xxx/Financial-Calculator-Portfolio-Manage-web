@@ -38,12 +38,11 @@ def home():
 def user_rec():
     pricing_model = request.form.getlist('pricing_model')
     option_type = request.form.getlist('option_type')
-    ticker, S, K, r, T = read_in()
+    ticker, S, K, r, T = 'AAPL', 100, 90, 0.05, 30
     try:
         adj_close = yf.download(ticker, start=formatted_one_year, end=formatted_today)['Adj Close']
     except ValueError("There's not enough data."):
         adj_close = yf.download(ticker)['Adj Close']
-    adj_close.to_csv('data/AAPL.csv')
     fig = plt.figure(figsize=(12, 8), dpi=100, facecolor="white")
     plt.title('Adjusted close of ' + ticker)
     plt.plot(adj_close, color='darkseagreen')
@@ -65,11 +64,17 @@ def user_rec():
 
     result_df = pd.DataFrame(columns=['model', 'option type', 'Expected PRICE'])
     title, prices, model, o_type, BS_bool, BS_df, BS_html = [], [], [], [], False, None, None
-    call = CommonOption(call_or_put=1, maturity=T/365, spot_price=S, sigma=float(np.std(adj_close)),
+    call = CommonOption(call_or_put=1, maturity=T/365, spot_price=S,
+                        sigma=float(np.std(adj_close.diff()[1:]/adj_close[:-1]) * np.sqrt(252)),
                         risk_free_rate=r, strike_price=K, dividends=0)
-    put = CommonOption(call_or_put=0, maturity=T/365, spot_price=S, sigma=float(np.std(adj_close)),
+    put = CommonOption(call_or_put=0, maturity=T/365, spot_price=S,
+                       sigma=float(np.std(adj_close.diff()[1:]/adj_close[:-1]) * np.sqrt(252)),
                        risk_free_rate=r, strike_price=K, dividends=0)
     [print(i) for i in [S, K, r, T]]
+
+    pricing_model = ['BS model']
+    option_type = ['European Option']
+
     if 'BS model' in pricing_model:
         BS_bool = True
         model = ['BS model']*2
@@ -103,23 +108,20 @@ def read_in():
     ticker = request.form['ticker']
     try:
         S = float(request.form['S'])
-    except ValueError:
+    except ValueError('Please enter a number'):
         S = -1
-        print('Please enter a number')
     try:
         K = float(request.form['K'])
-    except ValueError:
+    except ValueError('Please enter a number'):
         K = -1
-        print('Please enter a number')
     try:
         r = float(request.form['r'])
     except:
         r = risk_free
     try:
         T = float(request.form['T'])
-    except ValueError:
+    except ValueError('Please enter a number'):
         T = -1
-        print('Please enter a number')
     return ticker, S, K, r, T
 
 
@@ -145,7 +147,7 @@ def fit_model(model, option_type, option: CommonOption):
         price = option.trinomial_tree_US(3)[0]
     return round(price, 4)
 
-
+stock = 'AAPL'
 def candle_stick(stock, period='day'):
     if period == "week":
         start = today + datetime.timedelta(days=-500)

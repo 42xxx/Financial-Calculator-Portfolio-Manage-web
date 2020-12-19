@@ -168,7 +168,7 @@ class CommonOption:
 			-self.r * self.T) * N(d2)) / 365
 		rho = self.K * self.T * np.exp(-self.r * self.T) * N(d2) / 100
 
-		return round(c, 4), round(delta, 4), round(gamma, 4), round(vega, 4), round(theta, 4), round(rho, 4)
+		return round(c, 4), round(delta, 4), round(gamma, 4), round(vega, 4), round(theta, 6), round(rho, 4)
 
 	def B_S_put_para(self):
 		d1 = (np.log(self.S0 / self.K) + (self.r + self.sigma ** 2 / 2) * self.T) / (self.sigma * np.sqrt(self.T))
@@ -183,7 +183,7 @@ class CommonOption:
 		vega = self.S0 * M(d1) * np.sqrt(self.T) * 0.01
 		rho = -self.K * self.T * np.exp(-self.r * self.T) * N(-d2) / 100
 
-		return round(p, 4), round(delta, 4), round(gamma, 4), round(vega, 4), round(theta, 4), round(rho, 4)
+		return round(p, 4), round(delta, 4), round(gamma, 4), round(vega, 4), round(theta, 6), round(rho, 4)
 
 
 if __name__ == '__main__':
