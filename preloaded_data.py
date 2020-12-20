@@ -1,7 +1,5 @@
 import yfinance as yf
 import os
-os.getcwd()
-
 
 
 def preload():  # tickers of stocks in DJ
