@@ -3,22 +3,18 @@ import pandas as pd
 from pandas import DataFrame
 import yfinance as yf
 from preloaded_data import preload
-import os
 
-if __name__ == "main":
+
+if __name__ == "__main__":
 	
 	preload()
-	runtime_yf, runtime_csv = [], []
-	os.getcwd()
+	djia = ['MMM', 'AXP', 'AMGN', 'AAPL', 'BA', 'CAT', 'CVX', 'CSCO', 'DOW',
+		 'GS', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'MCD', 'MRK', 'MSFT',
+		 'NKE', 'PG', 'CRM', 'KO', 'HD', 'TRV', 'DIS', 'UNH', 'VZ', 'V',
+		 'WBA', 'WMT']
 	
 	# runtimes using yfinance
 
-	djia = ['MMM', 'AXP', 'AMGN', 'AAPL', 'BA', 'CAT', 'CVX', 'CSCO', 'DOW',
-			 'GS', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'MCD', 'MRK', 'MSFT',
-			 'NKE', 'PG', 'CRM', 'KO', 'HD', 'TRV', 'DIS', 'UNH', 'VZ', 'V',
-			 'WBA', 'WMT']
-
-	
 	results = []
 	for i in djia:
 		j = djia.index(i)
@@ -59,7 +55,6 @@ if __name__ == "main":
 	runtime_csv['number of stocks'] += 1
 
 	# clear up and print out
-	runtimes = []
 	runtimes = runtime_yf.join(runtime_csv, lsuffix='_yf', rsuffix='_csv')
 	runtimes = runtimes.rename(columns ={'number of stocks_yf':'number of stocks'})
 	runtimes = runtimes.drop(columns=['number of stocks_csv'])
