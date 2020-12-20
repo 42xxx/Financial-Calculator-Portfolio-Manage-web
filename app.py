@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash
+from flask_session import Session
 import itertools
 from commonoption import *
 import quandl
@@ -7,10 +8,14 @@ from io import BytesIO
 import base64
 import mpl_finance as mpf
 from portfolio import *
+import os
 
 
 # Initialize
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = os.urandom(24)
+Session(app)
 quandl.ApiConfig.api_key = "ASwbrrw4mXfhBSMWrEtp"
 risk_free = quandl.get('FRED/DGS1', authtoken="ASwbrrw4mXfhBSMWrEtp").iloc[-1, 0]
 
@@ -43,25 +48,33 @@ def user_rec():
     if request.method == 'POST':
         err_index = []
         skrt = [request.form['S'], request.form['K'], request.form['r'], request.form['T']]
-        a = yf.download(ticker, start="2019-12-01", end="2020-12-01")['Adj Close']
+        try:
+            a = yf.download(ticker, start="2019-12-01", end="2020-12-01")['Adj Close']
+        except ValueError:
+            a = 1
         if len(a) == 0:
             err_index.append(1)
+            flash('Your input is not a Ticker(symbol) listed in yahoo finance', 'ticker')
         for i in range(len(skrt)):
             try:
-                skrt[i] = float(skrt[i]) and len(skrt[i]) == 0
+                skrt[i] = float(skrt[i])
             except ValueError:
                 err_index.append(i + 2)
+                flash(u'Your input {0} is not a number'.format(['S', 'K', 'r', 'T'][i]), ['S', 'K', 'risk', 'T'][i])
         if len(pricing_model) == 0:
             err_index.append(6)
+            flash(u'You must choose at least one among the 3 methods', 'model')
         if len(option_type) == 0:
             err_index.append(7)
+            flash(u'You must choose at least one among the 2 option types', 'type')
         if request.form.get('candle_stick') is None:
             err_index.append(8)
+            flash(u'You must choose one among these 2.', 'period')
         if len(err_index) == 0:
             pass
         else:
             # back to the home page together with error description
-            return render_template('home.html', err=np.min(err_index))
+            return render_template('home.html')
 
     # the formal calculation part
     S, K, r, T = read_in()
@@ -102,6 +115,10 @@ def user_rec():
                        sigma=float(np.std(adj_close.diff()[1:]/adj_close[:-1]) * np.sqrt(252)),
                        risk_free_rate=r, strike_price=K, dividends=0)
 
+    comb_mess = 0
+    if 'BS model' in pricing_model and 'American Option' in option_type:
+        comb_mess = 'BS model currently does not support American Option pricing in this project.'
+
     # create another table for option parameters calculated with Black Shore model
     if 'BS model' in pricing_model:
         BS_bool = True
@@ -133,7 +150,7 @@ def user_rec():
 
     # link to the result web page
     return render_template('result.html', result=result_df, BS_bool=BS_bool,
-                           BS_df=BS_df, adj_plt=adj_plot, candle_plt=cs_plot)
+                           BS_df=BS_df, adj_plt=adj_plot, candle_plt=cs_plot, comb_mess=comb_mess)
 
 
 @app.route('/portfolio', methods=['POST', 'GET'])
@@ -152,7 +169,6 @@ def manage_portfolio():
             tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_add.split(',')]
         else:
             tickers = ticker_add.strip()
-        print(tickers)
         port.add_tickers(tickers)
         port.prepare_data()
         info_df = port.generate_df()
@@ -160,27 +176,27 @@ def manage_portfolio():
         pass
 
     if n > 1:
-        try:
+        if 'remove tickers' in request.args.keys():
             ticker_remove = request.form['remove tickers']
-            if ',' in ticker_remove:
-                tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_remove.split(',')]
-            else:
-                tickers = ticker_remove.strip()
-            print(tickers)
-            port.remove_tickers(tickers)
-            print(port.tickers)
-            port.prepare_data()
-            info_df = port.generate_df()
-        except:
-            pass
-
-        try:
+            try:
+                if ',' in ticker_remove:
+                    tickers = [i.lstrip().lstrip("'").rstrip().rstrip("'") for i in ticker_remove.split(',')]
+                else:
+                    tickers = ticker_remove.strip()
+                port.remove_tickers(tickers)
+                port.prepare_data()
+                info_df = port.generate_df()
+            except:
+                pass
+        if 'option weights' in request.args.keys():
             weights_in = request.form['option weights']
-            weights = [i.lstrip().rstrip() for i in weights_in.split(',')]
-            weights = [float(i) for i in weights]
-            exp_ret = round(port.expect_return(weights), 4)
-        except ValueError:
-            return render_template('portfolio.html', info_df=info_df, n=len(port.tickers), exp_ret=exp_ret, weight_df=weight_df)
+            try:
+                weights = [i.lstrip().rstrip() for i in weights_in.split(',')]
+                weights = [float(i) for i in weights]
+                exp_ret = round(port.expect_return(weights), 4)
+            except ValueError:
+                return render_template('portfolio.html', info_df=info_df, n=len(port.tickers),
+                                       exp_ret=exp_ret, weight_df=weight_df)
 
         weight_df = pd.DataFrame(columns=['ticker', 'weights'])
         weight_df['ticker'] = port.tickers[:-1]

@@ -33,7 +33,7 @@
 <header>
     <div class="container">
         <div id="brandname">
-            HERE IS THE RESULT
+            RESULT OF BASIC FINANCIAL CALCULATOR
         </div>
         <h1 style="color:darkolivegreen;text-align: center;">Option price estimated by models</h1>
     </div>
@@ -68,14 +68,21 @@
 </div>
 
 <br>
+<div align="center">
+    {% if comb_mess != 0 %}
+        <p style="color: indianred; font-size: 20px;font-weight:bold"> {{ comb_mess }}</p>
+        <p style="color: indianred; font-size: 20px;font-weight:bold"> Tips: BS model can be used to price American
+            call option, but not suitable for American put.</p>
+    {% endif %}
+</div>
 <br>
 <br>
 
 <h1 style="color:darkolivegreen;text-align: center;"> Price charts</h1>
 
 <div align="center">
-        <img src="{{ adj_plt }}" width="850 px">
-        <img src="{{ candle_plt }}" width="800 px">
+    <img src="{{ adj_plt }}" width="850 px">
+    <img src="{{ candle_plt }}" width="800 px">
 </div>
 
 
@@ -126,14 +133,15 @@
 <div align="center">
     {% for i in range(3) %}
         <label> </label> <img src="static/illustration1.jpg" width="225" height="225" alt=""/>
-        <label> </label> <img src="static/illustration2.jpg" width="225" height="225"  alt=""/>
+        <label> </label> <img src="static/illustration2.jpg" width="225" height="225" alt=""/>
     {% endfor %}
 </div>
 
 
 <div align="center">
     <button id="load" onclick="window.history.go(-1)" style="width:125px;height:30px;
-        background-color:darkseagreen;color: seagreen;font-weight:bold;font-size:16px">back</button>
+        background-color:darkseagreen;color: seagreen;font-weight:bold;font-size:16px">back
+    </button>
 </div>
 
 <br>

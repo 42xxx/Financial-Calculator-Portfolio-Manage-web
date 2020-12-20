@@ -26,25 +26,45 @@
 
 
         <p>ticker <input type="text" name="ticker" required/></p>
-        {% if err == 1 %}
-            <strong style="color:red;text-align: center;"> Your input Ticker is not listed in yahoo finance</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='ticker') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <p>Stock price <input type="text" name="S" required/></p>
-        {% if err == 2 %}
-            <strong style="color:red;text-align: center;"> Your input S is not a number</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='S') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <p>Strike price <input type="text" name="K" required/></p>
-        {% if err == 3 %}
-            <strong style="color:red;text-align: center;"> Your input K is not a number</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='K') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <p>Risk free return <input type="text" name="r"/></p>
-        {% if err == 4 %}
-            <strong style="color:red;text-align: center;"> Your input r is not a number</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='risk') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <p>Time to maturity <input type="text" name="T" required/></p>
-        {% if err == 5 %}
-            <strong style="color:red;text-align: center;"> Your input T is not a number</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='T') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
 
         <!-- ———————————————————————————————————————————— -->
@@ -68,9 +88,13 @@
                 <input name="pricing_model" value="Trinomial Tree" type="checkbox"> Trinomial Tree
             </label>
         </div>
-        {% if err == 6 %}
-            <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='model') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         <!-- ———————————————————————————————————————————— -->
 
@@ -87,9 +111,13 @@
                 <input name="option_type" value="American Option" type="checkbox"> American Option
             </label>
         </div>
-        {% if err == 7 %}
-            <strong style="color:red;text-align: center;"> Your must choose at least one</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='type') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         <p style="color:orange;text-align: center;"><b>What period of candle stick you prefer?</b></p>
         <div class="col-sm-2 ">
@@ -103,9 +131,13 @@
                 <input name="candle_stick" value="Week" type="radio"> Weekly Chart
             </label>
         </div>
-        {% if err == 8 %}
-            <strong style="color:#ff0000;text-align: center;"> You must choose one</strong>
-        {% endif %}
+        {% with messages = get_flashed_messages(category_filter='period') %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: indianred; font-size: 20px;font-weight:bold">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <br>
 
         <input type="submit" class="btn-lg" value="submit" style="width:125px;height:30px;
@@ -117,15 +149,16 @@
 <div align="center">
     {% for i in range(3) %}
         <label> </label> <img src="static/illustration1.jpg" width="225" height="225" alt=""/>
-        <label> </label> <img src="static/illustration2.jpg" width="225" height="225"  alt=""/>
+        <label> </label> <img src="static/illustration2.jpg" width="225" height="225" alt=""/>
     {% endfor %}
 </div>
 
 <div align="center">
 
-    <form action="{{ url_for('manage_portfolio')}}" method="POST">
+    <form action="{{ url_for('manage_portfolio') }}" method="POST">
         <button type="submit" style="width:250px;height:65px;background-color:lightpink;
-        color: indianred;font-weight:bold;font-size:20px">Manage your portfolio</button>
+        color: indianred;font-weight:bold;font-size:20px">Manage your portfolio
+        </button>
     </form>
 
 </div>
