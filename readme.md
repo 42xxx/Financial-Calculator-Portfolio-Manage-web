@@ -20,8 +20,7 @@ We wanted to apply some of the skills we have learned in this class towards crea
 3. User-friendly input of spot price, strike price, time to maturity, and risk-free rate. Missing risk free rate will be replaced by the interest rate of one year US treasury bonds. 
 4. Automatically calculates one year historical volatility for adjusted closing prices of the underlying asset.
 5. Allow user to create and modify their own portfolio by inputting stock symbols and weights of the assets they want to investigate. The program will send back some basic information such as volatility and beta value  with respect to the market, represented by SPY.
-\
-\
+
 **Deployment**
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 If a user wants to run this code on their own computer without publishing it for others to use, they will need to clone the code from our git and run it on their own desktop via the terminal. Once it is connected, a unique IP address will pop up, which can be copied and pasted into a browser. This will lead to the website, where the user can input data elements such as spot price, strike price, time to maturity, and risk-free rate. If the user wants to run this code and make it publicly available, then they will require an AWS instance or a similar service. 
@@ -41,3 +40,4 @@ If a user wants to run this code on their own computer without publishing it for
 Running a comparison on performance times for our function yielded a significant difference depending on where the data was pulled from. For this reason, we created a separate script, "Runtime", that is designed to measure the performance of downloading stock price data from the yfinance package of Python versus reading the data from a csv file. We found that pulling one year of historical data for a stock takes ~0.33 seconds. The performance was incrementally scaled using the list of stocks in the Dow Jones Index, with the total time for the entire list taking ~9 seconds. This is unacceptable for a project that is designed to scale. By contrast, pulling the data of a single stock by reading a csv file took .11 seconds. Incremental increases in reading .csv did not add significant incremental time; the entire list of Dow Jones industry stocks took .15 seconds. Based on this analysis, we believe that the latter source can help scale the project by increasing the number of options that can be priced quickly. A difference of several seconds can mean everything for market traders who would be interested in using such a tool, since this group values speed and quick execution when chasing rallies or selling fades. We believe that faster performance times can be one of the most marketable selling points for this product.
 
 In addition, the portfolio management component can also be improved upon in many ways, such as adding generalizations or improving error detection.
+
